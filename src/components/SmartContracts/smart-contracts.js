@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import { ABI } from "./ERC20abi";
+import { ABI } from "../../constants";
 import TxList from "../../small_components/TxList";
 
 export default function SmartContracts() {

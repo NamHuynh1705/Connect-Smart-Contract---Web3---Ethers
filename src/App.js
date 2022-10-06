@@ -4,6 +4,9 @@ import { ethers } from 'ethers';
 import SmartContracts from './components/SmartContracts/smart-contracts';
 import SendEthPayment from './components/SendEthPayment';
 import NetworkSwitch from './components/NetworkSwitch';
+import { ABI } from './constants';
+import SendMessage from './components/SendMessage';
+import ConnectWeb3 from './components/Web3';
 
 function App() {
   const [isConnected, setIsConnected] = useState(false);
@@ -14,11 +17,22 @@ function App() {
   // Gửi yêu cầu liên kết meta mask
   const requestAccount = async () => {
     // Check if MetaMask Extension exists
-    if (window.ethereum) {
+    const ethereum = window.ethereum
+    if (ethereum) {
       try {
-        const accounts = await window.ethereum.request({
-          method: "eth_requestAccounts"
-        })
+        const isDisconnect = !ethereum.isConnected();
+        // giải thích isConnected: https://docs.metamask.io/guide/ethereum-provider.html#methods
+        let accounts;
+        if (isDisconnect) {
+          await ethereum.request({
+            method: "wallet_requestPermissions",
+            params: [{ eth_accounts: {} }],
+          });
+        } else {
+          accounts = await ethereum.request({
+            method: "eth_requestAccounts",
+          });
+        }
         setWalletAddress(accounts[0] || null);
       } catch (error) {
         console.error("Error connecting ...");
@@ -62,96 +76,7 @@ function App() {
   const execute = async () => {
     if (typeof window.ethereum !== "undefined") {
       const contractAddress = walletAddress;
-      const abi = [
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "_name",
-              type: "string",
-            },
-            {
-              internalType: "uint256",
-              name: "_favoriteNumber",
-              type: "uint256",
-            },
-          ],
-          name: "addPerson",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          name: "nameToFavoriteNumber",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          name: "people",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "favoriteNumber",
-              type: "uint256",
-            },
-            {
-              internalType: "string",
-              name: "name",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "retrieve",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "_favoriteNumber",
-              type: "uint256",
-            },
-          ],
-          name: "store",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-      ];
-      const contract = new ethers.Contract(contractAddress, abi, signer);
+      const contract = new ethers.Contract(contractAddress, ABI, signer);
       try {
         await contract.store(42);
       } catch (error) {
@@ -194,6 +119,12 @@ function App() {
       <br />
       <hr></hr>
       <NetworkSwitch />
+      <br />
+      <hr></hr>
+      <SendMessage />
+      <br />
+      <hr></hr>
+      <ConnectWeb3 />
     </div>
   );
 }

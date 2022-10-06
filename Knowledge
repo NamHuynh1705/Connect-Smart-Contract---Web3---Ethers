@@ -1,0 +1,6 @@
+A. Điểm mạnh của Ethers so với Web3
+    1. Kích thước nhỏ hơn
+    2. Tải FE nhanh hơn
+    3. Không phụ thuộc phiên dịch (gây ra một số vấn đề cho người dùng windowns cho web3)
+    4. Có cấu trúc API tốt hơn
+    5. Có thể định nghĩa ABI là một mảng JS trong đó mỗi phần tử là một chuỗi => dễ đọc hơn

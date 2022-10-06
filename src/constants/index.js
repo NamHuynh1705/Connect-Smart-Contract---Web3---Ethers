@@ -1,3 +1,10 @@
+export const PROVIDERS = {
+  1: `https://mainnet.infura.io/v3/aaa0c61479de4836a8048eeaf78cd85c`,
+};
+
+// => api key lấy từ https://docs.infura.io/
+
+
 export const ABI = [
   {
     inputs: [
